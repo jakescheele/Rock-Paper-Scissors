@@ -13,6 +13,10 @@ let database = firebase.database();
 
 let gameID = '';
 
+// array of objects of games
+let openGames = database.ref('openGames')
+// LINE ABOVE IS BROKEN
+
 let currentGameIndex = '';
 
 let roundNumber = 0;
@@ -38,8 +42,6 @@ else {
 // FIND MATCH FN
 let findMatch = function () {
   // show 'searching for game' beneath start game
-  // THIS LINE IS BROKEN 
-  let openGames = database.ref('openGames')
   console.log('BROKEN openGames from fb', openGames)
   // loop through opengames in firebase
   for (i in openGames) {
@@ -59,7 +61,8 @@ let findMatch = function () {
   }
 
   // if can't find game or no games exist, generate new gameID
-  if (openGames === null || localStorage.getItem('gameID') === null) {
+  // FIX THIS IF STATEMENT
+  if (openGames === null || 'something') {
     // generate new gameID
     gameID = ID();
     // append to opengames
@@ -76,7 +79,7 @@ let findMatch = function () {
   // be looking for changes to this game object to know when player2 field is populated
   // FIX THIS
   database.ref(player2).on('value', function (snapshot) {
-   
+
     // refresh openGames to current firebase version
     // loop through openGames to find matching gameID,  
     for (i in openGames) {
@@ -108,46 +111,75 @@ let beginRound = function () {
   // database.ref(roundNumber)++
   roundNumber++;
   // push 'round'+roundNumber object into firebase game ojbect
-  
+
 }
 
 // OPTION CLICKED FN
 let optionClicked = function () {
-// make self appear active in html
-// let option = this.val()
-// push option to currentGame object in firebase using currentGameIndex (if playerID = currentGame.player1 then .push('option1', option))
-// sync currentGame to openGames
-// sync openGames with firebase
-// on(value) to check to see if both answers are filled out
-// compareAnswers()
-}
+  // make self appear active in html
+  // let option = this.val()
+  // push option to currentGame object in firebase using currentGameIndex (if playerID = currentGame.player1 then .push('option1', option))
+
+  // on(value) to check to see if both answers are filled out
+  // display "Waiting for other player..."
+  compareAnswers()
+};
 
 // COMPARE ANSWERS FN
 let compareAnswers = function () {
-// if tie
+  // if tie
 
-// if player1 choose rock
-
-  // if player2 choose scissors
-    // player1 wins
-  // else player 2 wins
-
-// if player1 choose paper
-
-  // if player2 choose rock
-    // player1 wins
-  // else player 2 wins
-
-// if player1 choose scissors
-
-  // if player2 choose paper
-    // player1 wins
-  // else player 2 wins
+  if (p1choice === rock) {
+    if (p2choice === scissors) player1wins()
+    else player2wins()
+  }
+  if (p1choice === paper) {
+    if (p2choice === rock) player1wins()
+    else player2wins()
+  }
+  if (p1choice === scissors) {
+    if (p2choice === paper) player1wins()
+    else player2wins()
+  }
 }
 
+// PLAYER 1 WINS FN
+let player1wins = function () {
+  if (playerID === player1) {
+    // myWins++
+    $('#modal').modal('show')
+  }
+  else {
+    // myLosses++
+    $('#modal').modal('show')
+  };
+  nextRound();
+}
+
+// PLAYER 2 WINS FN
+let player2wins = function () {
+  if (playerID === player2) {
+    // myWins++
+    $('#modal').modal('show')
+  }
+  else {
+    // myLosses++
+    $('#modal').modal('show')
+  };
+  nextRound();
+}
+
+// GAME OVER FN
+let gameOver = function () {
+// move from openGames in firebase to finishedGames
+}
+
+// On session exit / window close, either add ability to rejoin game or remove game from firebase and alert other user
 
 
 // CLICK HANDLERS
 
 $('#startGame').on('click', findMatch);
+
+
 

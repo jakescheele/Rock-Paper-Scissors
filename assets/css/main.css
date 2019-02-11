@@ -1,0 +1,19 @@
+body {
+    background-image: url('../images/background.jpg');
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+img {
+    border-style: solid !important;
+    border-radius: 15px;
+    border-color: white;
+    border-width: 3px;
+}
+@font-face {
+    font-family: KrabbyPatty;
+    src: url('../fonts/krabbypatty.ttf');
+}
+h1, h2, h3, h4, h5, a, span, p {
+    font-family: KrabbyPatty !important;
+    color: white !important;
+}
