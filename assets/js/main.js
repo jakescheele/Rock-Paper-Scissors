@@ -14,10 +14,11 @@ let database = firebase.database();
 let gameID = '';
 
 // array of objects of games
-let openGames = [];
+let openGamesArray = [];
+// push open games from firebase to openGames
 database.ref().on("child_added", function(snapshot) {
   console.log('snapshot',snapshot)
-  openGames.push(snapshot);
+  openGamesArray.push(snapshot);
 })
 // LINE ABOVE IS BROKEN
 
@@ -41,43 +42,44 @@ if (playerID === null || playerID === undefined || playerID.length === 0) {
 else {
   console.log('Player ID: ', playerID)
 }
+console.log('ref',database.ref())
 
 
 // FIND MATCH FN
 let findMatch = function () {
   // show 'searching for game' beneath start game
-  console.log('BROKEN openGames from fb', openGames)
+  console.log('BROKEN openGames from fb', openGamesArray)
   // loop through opengames in firebase
-  for (i in openGames) {
+  for (i in openGamesArray) {
     // find game with empty player2
-    if (openGames[i].player2 === '') {
+    if (openGamesArray[i].player2 === '') {
       // set player2 to current players ID
-      openGames[i].player2 = playerID;
+      openGamesArray[i].player2 = playerID;
       // pull game ID of found game
-      openGames[i].gameID = gameID;
+      openGamesArray[i].gameID = gameID;
       // send to currentGame variable
       i = currentGameIndex
       // stop loop from continuing after game is found
       break;
     }
     // push openGames to firebase
-    database.ref().set('openGames', openGames);
+    // database.ref().set({
+    //   openGames: openGamesArray
+    // });
   }
 
   // if can't find game or no games exist, generate new gameID
-  // FIX THIS IF STATEMENT
-  if (openGames === null) {
+  if (gameID === '') {
+    console.log('creating new game...')
     // generate new gameID
     gameID = ID();
     // append to opengames
-    openGames.push({
+    database.ref().push({
       'gameID': gameID,
-      'player1': playerID,
-      'player2': ''
+      'player1': playerID
     })
     // display "Searching for player..." pause .5 sec
-    // push openGames array to firebase
-    database.ref().set('openGames', openGames)
+    $('#gameMessage').html('Looking for player...')
   }
 
   // be looking for changes to this game object to know when player2 field is populated
@@ -86,17 +88,16 @@ let findMatch = function () {
 
     // refresh openGames to current firebase version
     // loop through openGames to find matching gameID, 
-    console.log('snapshot.val',snapshot.val()) 
-    for (i in openGames) {
-      if (openGames[i].gameID === gameID) {
+    console.log('snapshot.val',snapshot.val() )
+    for (i in openGamesArray) {
+      if (openGamesArray[i].gameID === gameID) {
         console.log("Player found: ", snapshot.val());
         // snapshot.val().openGames[i].player2)
-        startGame();
+        setTimeout(function(){$('#gameMessage').html('Player found!')}, 1000);
+        setTimeout(function(){startGame()}, 2000);
       }
     }
-    // display "Player found!" pause .5 sec
     // stop on value fn from continuing
-    // break;
   })
 
 }
@@ -105,7 +106,7 @@ let findMatch = function () {
 // START GAME FN
 let startGame = function () {
   // go to game page
-  window.location.pathname = 'game.html'
+  window.location = 'game.html'
   // use gameID to find players in game, display player name that isn't you in opponent div
   beginRound()
 }
@@ -121,7 +122,7 @@ let beginRound = function () {
 
 // OPTION CLICKED FN
 let optionClicked = function () {
-  // make self appear active in html
+  // make self appear active in html (blue border)
   // let option = this.val()
   // push option to currentGame object in firebase using currentGameIndex (if playerID = currentGame.player1 then .push('option1', option))
 
@@ -133,6 +134,8 @@ let optionClicked = function () {
 // COMPARE ANSWERS FN
 let compareAnswers = function () {
   // if tie
+  if (p1choice === p2choice) {
+  }
 
   if (p1choice === rock) {
     if (p2choice === scissors) player1wins()
