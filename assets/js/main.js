@@ -14,7 +14,11 @@ let database = firebase.database();
 let gameID = '';
 
 // array of objects of games
-let openGames = database.ref('openGames')
+let openGames = [];
+database.ref().on("child_added", function(snapshot) {
+  console.log('snapshot',snapshot)
+  openGames.push(snapshot);
+})
 // LINE ABOVE IS BROKEN
 
 let currentGameIndex = '';
@@ -62,7 +66,7 @@ let findMatch = function () {
 
   // if can't find game or no games exist, generate new gameID
   // FIX THIS IF STATEMENT
-  if (openGames === null || 'something') {
+  if (openGames === null) {
     // generate new gameID
     gameID = ID();
     // append to opengames
@@ -78,10 +82,11 @@ let findMatch = function () {
 
   // be looking for changes to this game object to know when player2 field is populated
   // FIX THIS
-  database.ref(player2).on('value', function (snapshot) {
+  database.ref().on('value', function (snapshot) {
 
     // refresh openGames to current firebase version
-    // loop through openGames to find matching gameID,  
+    // loop through openGames to find matching gameID, 
+    console.log('snapshot.val',snapshot.val()) 
     for (i in openGames) {
       if (openGames[i].gameID === gameID) {
         console.log("Player found: ", snapshot.val());
@@ -91,7 +96,7 @@ let findMatch = function () {
     }
     // display "Player found!" pause .5 sec
     // stop on value fn from continuing
-    break;
+    // break;
   })
 
 }
