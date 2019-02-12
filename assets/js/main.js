@@ -17,12 +17,10 @@ let gameID = '';
 let openGamesArray = [];
 // push open games from firebase to openGames
 database.ref().on("child_added", function(snapshot) {
-  console.log('snapshot',snapshot)
-  openGamesArray.push(snapshot);
+  openGamesArray.push(snapshot.val());
 })
-// LINE ABOVE IS BROKEN
+console.log('open games array: ',openGamesArray)
 
-let currentGameIndex = '';
 
 let roundNumber = 0;
 
@@ -57,8 +55,6 @@ let findMatch = function () {
       openGamesArray[i].player2 = playerID;
       // pull game ID of found game
       openGamesArray[i].gameID = gameID;
-      // send to currentGame variable
-      i = currentGameIndex
       // stop loop from continuing after game is found
       break;
     }
@@ -85,16 +81,17 @@ let findMatch = function () {
   // be looking for changes to this game object to know when player2 field is populated
   // FIX THIS
   database.ref().on('value', function (snapshot) {
-
     // refresh openGames to current firebase version
     // loop through openGames to find matching gameID, 
-    console.log('snapshot.val',snapshot.val() )
     for (i in openGamesArray) {
       if (openGamesArray[i].gameID === gameID) {
+        console.log('line 93', openGamesArray[0])
+        if (this.player2 !== null && this.gameID === gameID){
         console.log("Player found: ", snapshot.val());
         // snapshot.val().openGames[i].player2)
         setTimeout(function(){$('#gameMessage').html('Player found!')}, 1000);
         setTimeout(function(){startGame()}, 2000);
+        }
       }
     }
     // stop on value fn from continuing
@@ -106,7 +103,7 @@ let findMatch = function () {
 // START GAME FN
 let startGame = function () {
   // go to game page
-  window.location = 'game.html'
+  // window.location = 'game.html'
   // use gameID to find players in game, display player name that isn't you in opponent div
   beginRound()
 }
