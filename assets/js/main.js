@@ -46,11 +46,13 @@ console.log('ref',database.ref())
 // FIND MATCH FN
 let findMatch = function () {
   // show 'searching for game' beneath start game
-  console.log('BROKEN openGames from fb', openGamesArray)
+    $('#gameMessage').html('Searching for game...')
+  console.log('openGamesArray', openGamesArray)
   // loop through opengames in firebase
   for (i in openGamesArray) {
     // find game with empty player2
-    if (openGamesArray[i].player2 === '') {
+    if (openGamesArray[i].player2 === undefined && openGamesArray[i].player1 !== playerID) {
+      console.log('setting player 2')
       // set player2 to current players ID
       openGamesArray[i].player2 = playerID;
       // pull game ID of found game
