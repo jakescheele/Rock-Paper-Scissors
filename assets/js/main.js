@@ -21,6 +21,7 @@ database.ref().on("child_added", function(snapshot) {
 })
 console.log('open games array: ',openGamesArray)
 
+let currentGameIndex = '';
 
 let roundNumber = 0;
 
@@ -52,11 +53,12 @@ let findMatch = function () {
   for (i in openGamesArray) {
     // find game with empty player2
     if (openGamesArray[i].player2 === undefined && openGamesArray[i].player1 !== playerID) {
-      console.log('setting player 2')
+      console.log('found game, setting player 2')
       // set player2 to current players ID
       openGamesArray[i].player2 = playerID;
       // pull game ID of found game
       openGamesArray[i].gameID = gameID;
+      currentGameIndex = i
       // stop loop from continuing after game is found
       break;
     }
@@ -76,6 +78,7 @@ let findMatch = function () {
       'gameID': gameID,
       'player1': playerID
     })
+    currentGameIndex = openGamesArray.length - 1
     // display "Searching for player..." pause .5 sec
     $('#gameMessage').html('Looking for player...')
   }
@@ -84,20 +87,17 @@ let findMatch = function () {
   // FIX THIS
   database.ref().on('value', function (snapshot) {
     // refresh openGames to current firebase version
-    // loop through openGames to find matching gameID, 
-    for (i in openGamesArray) {
-      if (openGamesArray[i].gameID === gameID) {
-        console.log('line 93', openGamesArray[0])
-        if (this.player2 !== null && this.gameID === gameID){
-        console.log("Player found: ", snapshot.val());
-        // snapshot.val().openGames[i].player2)
+    console.log('.val snapshot', snapshotToArray(snapshot)[currentGameIndex])
+        console.log('line 93', openGamesArray[currentGameIndex])
+        if (openGamesArray[currentGameIndex].gameID === gameID && openGamesArray[currentGameIndex].player2 !== undefined){
+          console.log('Player found')
         setTimeout(function(){$('#gameMessage').html('Player found!')}, 1000);
         setTimeout(function(){startGame()}, 2000);
         }
       }
-    }
+  
     // stop on value fn from continuing
-  })
+  )
 
 }
 
@@ -189,4 +189,19 @@ let gameOver = function () {
 $('#startGame').on('click', findMatch);
 
 
+
+
+
+function snapshotToArray(snapshot) {
+  var returnArr = [];
+
+  snapshot.forEach(function(childSnapshot) {
+      var item = childSnapshot.val();
+      item.key = childSnapshot.key;
+
+      returnArr.push(item);
+  });
+
+  return returnArr;
+};
 
