@@ -51,7 +51,7 @@ let findMatch = function () {
   console.log('openGamesArray', openGamesArray)
   // loop through opengames in firebase
   for (i in openGamesArray) {
-    // find game with empty player2
+    // find game with empty player2 and player1 isnt you
     if (openGamesArray[i].player2 === undefined && openGamesArray[i].player1 !== playerID) {
       console.log('found game, setting player 2')
       // set player2 to current players ID
@@ -87,8 +87,8 @@ let findMatch = function () {
   // FIX THIS
   database.ref().on('value', function (snapshot) {
     // refresh openGames to current firebase version
-    console.log('.val snapshot', snapshotToArray(snapshot)[currentGameIndex])
-        console.log('line 93', openGamesArray[currentGameIndex])
+    console.log('tester', snapshot)
+    console.log('snapshotToArray: ', snapshotToArray(snapshot)[currentGameIndex])
         if (openGamesArray[currentGameIndex].gameID === gameID && openGamesArray[currentGameIndex].player2 !== undefined){
           console.log('Player found')
         setTimeout(function(){$('#gameMessage').html('Player found!')}, 1000);
@@ -113,10 +113,10 @@ let startGame = function () {
 // BEGIN ROUND FN
 let beginRound = function () {
   // grab myWins and myLosses from localstorage, display on header
-  // database.ref(roundNumber)++
+  // database.ref(roundNumber)++ (or add .5 since both players will do it?)
   roundNumber++;
   // push 'round'+roundNumber object into firebase game ojbect
-
+  // push new turn object into firebase game object. 
 }
 
 // OPTION CLICKED FN
@@ -124,8 +124,19 @@ let optionClicked = function () {
   // make self appear active in html (blue border)
   // let option = this.val()
   // push option to currentGame object in firebase using currentGameIndex (if playerID = currentGame.player1 then .push('option1', option))
-
-  // on(value) to check to see if both answers are filled out
+database.ref().push()
+  // check to see if both answers are filled out
+  database.ref().on('value', function (snapshot) {
+    // refresh openGames to current firebase version
+    console.log('snapshotToArray: ', snapshotToArray(snapshot)[currentGameIndex])
+        if ("this turn has p1 answer" && "this turn has p2 answer"){
+          console.log('Both answers recieved')
+        setTimeout(function(){compareAnswers()}, 1000);
+        }
+      }
+  
+    // stop on value fn from continuing
+  )
   // display "Waiting for other player..."
   compareAnswers()
 };
@@ -155,10 +166,12 @@ let player1wins = function () {
   if (playerID === player1) {
     // myWins++
     $('#modal').modal('show')
+    $('#modalTitle').html('You win!')
   }
   else {
     // myLosses++
     $('#modal').modal('show')
+    $('#modalTitle').html('You lose!')
   };
   nextRound();
 }
@@ -168,10 +181,12 @@ let player2wins = function () {
   if (playerID === player2) {
     // myWins++
     $('#modal').modal('show')
+    $('#modalTitle').html('You win!')
   }
   else {
     // myLosses++
     $('#modal').modal('show')
+    $('#modalTitle').html('You lose!')
   };
   nextRound();
 }
@@ -187,6 +202,7 @@ let gameOver = function () {
 // CLICK HANDLERS
 
 $('#startGame').on('click', findMatch);
+$('.option').on('click', optionClicked);
 
 
 
@@ -194,14 +210,10 @@ $('#startGame').on('click', findMatch);
 
 function snapshotToArray(snapshot) {
   var returnArr = [];
-
   snapshot.forEach(function(childSnapshot) {
       var item = childSnapshot.val();
-      item.key = childSnapshot.key;
-
       returnArr.push(item);
   });
-
   return returnArr;
 };
 

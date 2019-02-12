@@ -91,15 +91,15 @@
                 <h1 class="mt-3">Choose Your Weapon...</h1>
                 <div class='row mt-3'>
                     <div class='col-md m-2 p-2'>
-                        <img src='assets/images/rock.jpg' style='width:300px; height: 300px' />
+                        <img class='option' val='rock' src='assets/images/rock.jpg' style='width:300px; height: 300px' />
                         <h2>Rock</h2>
                     </div>
                     <div class='col-md m-2 p-2'>
-                        <img src='assets/images/paper.jpg' />
+                        <img class='option' val='paper' src='assets/images/paper.jpg' />
                         <h2>Paper</h2>
                     </div>
                     <div class='col-md m-2 p-2'>
-                        <img src='assets/images/scissors.png' />
+                        <img class='option' val='scissors' src='assets/images/scissors.png' />
                         <h2>Scissors</h2>
                     </div>
                 </div>
@@ -113,17 +113,15 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="modalTitle">Player _ Wins!</h5>
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <p>Your opponent chose <b id='opponentsChoice'></b></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary">Next Round</button>
                 </div>
             </div>
         </div>
